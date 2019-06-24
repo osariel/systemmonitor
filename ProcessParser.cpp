@@ -1,16 +1,15 @@
 #include <iostream>
+#include <fstream>
 #include <time.h>
 #include "ProcessParser.h"
+#include "ProcessContainer.h"
 #include "util.h"
 using namespace std;
 
-std::ifstream& ProcessParser::getStream(){
-    return stream;
-}
 
 string ProcessParser::getCmd(string pid){
-
- Util::getStream((Path::basePath() + pid + Path::cmdPath()), getStream());
+std::ifstream stream;
+ Util::getStream((Path::basePath() + pid + Path::cmdPath()), stream);
     string line;
     getline(stream, line);
     return line;
@@ -21,7 +20,8 @@ std::string ProcessParser::getVmSize(string pid){
     string name = "VmData";
     string value;
     float result;
-     Util::getStream((Path::basePath() + pid + Path::statusPath()), getStream());
+    std::ifstream stream;
+     Util::getStream((Path::basePath() + pid + Path::statusPath()), stream);
 
       while(std::getline(stream, line)){
         // Searching line by line
@@ -43,7 +43,8 @@ string ProcessParser::getCpuPercent(string pid)
     string line;
     string value;
     float result;
-    Util::getStream((Path::basePath() + pid + Path::statusPath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + pid + Path::statusPath()), stream);
     getline(stream, line);
     string str = line;
     istringstream buf(str);
@@ -68,7 +69,8 @@ string ProcessParser::getProcUpTime(string pid)
     string line;
     string value;
     float result;
-    Util::getStream((Path::basePath() + pid + Path::statusPath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + pid + Path::statusPath()), stream);
     getline(stream, line);
     string str = line;
     istringstream buf(str);
@@ -80,7 +82,8 @@ string ProcessParser::getProcUpTime(string pid)
 long int ProcessParser::getSysUpTime()
 {
     string line;
-    Util::getStream((Path::basePath() + Path::upTimePath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + Path::upTimePath()), stream);
     getline(stream,line);
     istringstream buf(line);
     istream_iterator<string> beg(buf), end;
@@ -93,7 +96,8 @@ string ProcessParser::getProcUser(string pid)
     string line;
     string name = "Uid:";
     string result ="";
-    Util::getStream((Path::basePath() + pid + Path::statusPath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + pid + Path::statusPath()), stream);
     // Getting UID for user
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
@@ -140,7 +144,21 @@ vector<string> ProcessParser::getPidList()
         throw std::runtime_error(std::strerror(errno));
     return container;
 }
+int ProcessParser::getTotalNumberOfProcesses(){
+   ProcessContainer proccontainer;
+   std::vector<std::vector<std::string>> returnedValues;
+   //returnedValues = ProcessContainer::getList();
+   returnedValues = proccontainer.getList();
+   return returnedValues.size();
+}
 
+int ProcessParser::getNumberOfRunningProcesses(){
+    ProcessContainer proccontainer;
+   std::vector<std::vector<std::string>> returnedValues;
+   //returnedValues = ProcessContainer::getList();
+   returnedValues = proccontainer.getList();
+   return returnedValues.size();
+}
 vector<string> ProcessParser::getSysCpuPercent(string coreNumber)
 {
     // It is possible to use this method for selection of data for overall cpu or every core.
@@ -150,7 +168,8 @@ vector<string> ProcessParser::getSysCpuPercent(string coreNumber)
     string name = "cpu" + coreNumber;
     string value;
     int result;
-    Util::getStream((Path::basePath() + Path::statPath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + Path::statPath()), stream);
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
             istringstream buf(line);
@@ -167,7 +186,8 @@ int ProcessParser::getNumberOfCores(){
     // Get the number of host cpu cores
     string line;
     string name = "cpu cores";
-    Util::getStream((Path::basePath() + "cpuinfo"), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + "cpuinfo"), stream);
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
             istringstream buf(line);
@@ -218,7 +238,8 @@ float ProcessParser::getSysRamPercent()
 
     string value;
     int result;
-    Util::getStream((Path::basePath() + Path::memInfoPath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + Path::memInfoPath()), stream);
     float total_mem = 0;
     float free_mem = 0;
     float buffers = 0;
@@ -252,7 +273,8 @@ string ProcessParser::getSysKernelVersion()
 {
     string line;
     string name = "Linux version ";
-    Util::getStream((Path::basePath() + Path::versionPath()), getStream());
+    std::ifstream stream;
+    Util::getStream((Path::basePath() + Path::versionPath()), stream);
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
             istringstream buf(line);
@@ -262,4 +284,18 @@ string ProcessParser::getSysKernelVersion()
         }
     }
     return "";
+}
+
+string ProcessParser::getOSName(){
+    return "Ubuntu";
+}
+
+bool ProcessParser::isPidExisting(string pid){
+   vector<string> v = ProcessParser::getPidList();
+    if(std::find(v.begin(), v.end(), pid) != v.end()) {
+    return true;
+} else {
+    return false;
+}
+
 }

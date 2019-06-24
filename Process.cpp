@@ -1,5 +1,6 @@
 #include <string>
 #include "Process.h"
+#include "ProcessParser.h"
 void Process::setPid(int pid){
     this->pid = pid;
 }

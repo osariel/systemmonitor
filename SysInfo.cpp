@@ -1,5 +1,5 @@
 #include "SysInfo.h"
-
+#include "ProcessParser.h"
 void SysInfo::getOtherCores(int _size){
 //when number of cores is detected, vectors are modified to fit incoming data
         this->coresStats = std::vector<std::string>();
@@ -32,7 +32,7 @@ void SysInfo::setAttributes(){
     this-> upTime = ProcessParser::getSysUpTime();
     this-> totalProc = ProcessParser::getTotalNumberOfProcesses();
     this-> runningProc = ProcessParser::getNumberOfRunningProcesses();
-    this-> threads = ProcessParser::getTotalThreads();
+    this-> threads = ProcessParser::getNumberOfCores();
     this->currentCpuStats = ProcessParser::getSysCpuPercent();
     this->cpuPercent = ProcessParser::PrintCpuStats(this->lastCpuStats,this->currentCpuStats);
     this->lastCpuStats = this->currentCpuStats;
