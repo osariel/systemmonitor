@@ -44,7 +44,7 @@ string ProcessParser::getCpuPercent(string pid)
     string value;
     float result;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + pid + "/" + Path::statusPath()), stream);
+    Util::getStream((Path::basePath() + pid + "/" + Path::stat()), stream);
     getline(stream, line);
     string str = line;
     istringstream buf(str);
@@ -70,7 +70,7 @@ string ProcessParser::getProcUpTime(string pid)
     string value;
     float result;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + pid + "/" + Path::statusPath()), stream);
+    Util::getStream((Path::basePath() + pid + "/" + Path::stat()), stream);
     getline(stream, line);
     string str = line;
     istringstream buf(str);
@@ -83,7 +83,7 @@ long int ProcessParser::getSysUpTime()
 {
     string line;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + Path::upTimePath()), stream);
+    Util::getStream((Path::basePath() + "/" + Path::upTimePath()), stream);
     getline(stream,line);
     istringstream buf(line);
     istream_iterator<string> beg(buf), end;
@@ -169,7 +169,7 @@ vector<string> ProcessParser::getSysCpuPercent(string coreNumber)
     string value;
     int result;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + Path::statPath()), stream);
+    Util::getStream((Path::basePath() + "/" + Path::statPath()), stream);
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
             istringstream buf(line);
@@ -187,7 +187,7 @@ int ProcessParser::getNumberOfCores(){
     string line;
     string name = "cpu cores";
     std::ifstream stream;
-    Util::getStream((Path::basePath() + "cpuinfo"), stream);
+    Util::getStream((Path::basePath() + "/" + "cpuinfo"), stream);
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
             istringstream buf(line);
@@ -239,7 +239,7 @@ float ProcessParser::getSysRamPercent()
     string value;
     int result;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + Path::memInfoPath()), stream);
+    Util::getStream((Path::basePath() + "/" + Path::memInfoPath()), stream);
     float total_mem = 0;
     float free_mem = 0;
     float buffers = 0;
@@ -274,7 +274,7 @@ string ProcessParser::getSysKernelVersion()
     string line;
     string name = "Linux version ";
     std::ifstream stream;
-    Util::getStream((Path::basePath() + Path::versionPath()), stream);
+    Util::getStream((Path::basePath() + "/" + Path::versionPath()), stream);
     while (std::getline(stream, line)) {
         if (line.compare(0, name.size(),name) == 0) {
             istringstream buf(line);
