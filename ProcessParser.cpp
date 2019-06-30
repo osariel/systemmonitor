@@ -44,7 +44,7 @@ string ProcessParser::getCpuPercent(string pid)
     string value;
     float result;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + pid + "/" + Path::stat()), stream);
+    Util::getStream((Path::basePath() + pid + "/" + Path::statPath()), stream);
     getline(stream, line);
     string str = line;
     istringstream buf(str);
@@ -70,7 +70,7 @@ string ProcessParser::getProcUpTime(string pid)
     string value;
     float result;
     std::ifstream stream;
-    Util::getStream((Path::basePath() + pid + "/" + Path::stat()), stream);
+    Util::getStream((Path::basePath() + pid + "/" + Path::statPath()), stream);
     getline(stream, line);
     string str = line;
     istringstream buf(str);
@@ -294,8 +294,6 @@ bool ProcessParser::isPidExisting(string pid){
    vector<string> v = ProcessParser::getPidList();
     if(std::find(v.begin(), v.end(), pid) != v.end()) {
     return true;
-} else {
-    return false;
-}
+}else{return false;}
 
 }
